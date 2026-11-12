@@ -1,0 +1,13 @@
+# python environment and the tables the scripts write
+.venv/
+data/
+__pycache__/
+.Rhistory
+.Rproj.user/
+.DS_Store
+
+# the presenter's own files: the run sheet, poll set-up, recording notes, page backups
+script.md
+polls.md
+recording.md
+releases_page/

@@ -1,0 +1,7 @@
+{
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+  "files.exclude": { ".venv": true },
+  "editor.fontSize": 16,
+  "terminal.integrated.fontSize": 15,
+  "markdown.preview.fontSize": 16
+}
