@@ -57,3 +57,7 @@ Both scripts pin `VERSION = "v2026.11.09"`, so they return the same rows next ye
 ## Questions and requests
 
 Add to the wish list at the end of the [notes](https://bit.ly/calcofi-db-notes_2026-11), or [open an issue](https://github.com/CalCOFI/db-tour_2026-11/issues) here.
+
+## Licence
+
+The scripts and text here are under the [MIT licence](LICENSE). The data they read keep their own licences and citations: see [cite this data](https://calcofi.io/docs/cite.html).
