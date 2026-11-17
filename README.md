@@ -1,16 +1,17 @@
 # CalCOFI.io database tour (November 2026)
 
-The materials from the tour of the CalCOFI.io integrated database given on Thursday 12 November 2026: the slides, the notes, and the two scripts that were run live. Everything here reads the public release **v2026.11.09** ([doi:10.5281/zenodo.24083894](https://doi.org/10.5281/zenodo.24083894)) over https. There is no login and no data to download first.
+The materials from the tour of the CalCOFI.io integrated database given on Thursday 12 November 2026: the recording, the slides, the notes, and the two scripts that were run live. A summary of what the tour showed and what attendees asked for is on [calcofi.io/tutorials/db-tour-2026-11](https://calcofi.io/tutorials/db-tour-2026-11/). Everything here reads the public release **v2026.11.09** ([doi:10.5281/zenodo.24083894](https://doi.org/10.5281/zenodo.24083894)) over https. There is no login and no data to download first.
 
-## The three parts
+## The four parts
 
 | | what it is | link |
 |---|---|---|
+| **Recording** | the tour on Google Meet, 70 minutes, with chapter times on the [tutorial page](https://calcofi.io/tutorials/db-tour-2026-11/) | <https://drive.google.com/file/d/1KYbrsO7j08eSlUOuj-YwsyYH1f7n-DGw/view> |
 | **Slides** | 25 slides: the arc of the tour, a link out to every page shown, and the questions put to attendees | <https://bit.ly/calcofi-db-slides_2026-11> |
-| **Notes** | the Google Doc from the invite: the agenda, the four polls, and the wish list, which stays open for requests | <https://bit.ly/calcofi-db-notes_2026-11> |
+| **Notes** | the Google Doc from the invite: the agenda, the four polls, and the wish list as it stood after the call (view only now) | <https://bit.ly/calcofi-db-notes_2026-11> |
 | **Repo** | this folder: the R and Python walkthroughs and a one-page guide to the tables | <https://github.com/CalCOFI/db-tour_2026-11> |
 
-Each of the three links to the other two.
+All four are open to anyone with the link.
 
 ## Get the scripts
 
@@ -56,7 +57,7 @@ Both scripts pin `VERSION = "v2026.11.09"`, so they return the same rows next ye
 
 ## Questions and requests
 
-Add to the wish list at the end of the [notes](https://bit.ly/calcofi-db-notes_2026-11), or [open an issue](https://github.com/CalCOFI/db-tour_2026-11/issues) here.
+[Open an issue](https://github.com/CalCOFI/db-tour_2026-11/issues) here. The wish list in the [notes](https://bit.ly/calcofi-db-notes_2026-11) is closed to edits; what is in it stands.
 
 ## Licence
 
