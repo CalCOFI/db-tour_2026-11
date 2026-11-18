@@ -25,6 +25,8 @@ git clone https://github.com/CalCOFI/db-tour_2026-11.git
 |---|---|
 | [`01_tour.R`](01_tour.R) | the R walkthrough in 15 sections, using [calcofi4r](https://calcofi.io/calcofi4r/). `[live]` marks the sections shown in the tour; the rest are take-home, and each runs on its own after sections 0 and 1 |
 | [`02_tour.py`](02_tour.py) | the same in Python, in `# %%` cells, using [calcofi4py](https://calcofi.io/calcofi4py/). The two agree row for row |
+| [`03_isopycnals.R`](03_isopycnals.R) | after the tour: bottle and CTD temperature in 10 m bins against each one's own baseline, and conditions on isopycnals at seven Southern California Bight stations (calcofi4r 1.32.0+) |
+| [`04_isopycnal-surfaces.R`](04_isopycnal-surfaces.R) | after the tour: σθ 25.6 and 26.6 for every cruise 1993–2026 at the stations of the November 2026 cruise, as a table, fall time series by region and maps of each surface (calcofi4r 1.35.0+, release v2026.11.14+; needs a stations list with regions in `data/`) |
 | [`schema.md`](schema.md) | how the tables fit together: the core diagram, what one row of each table is, and the joins |
 | `.vscode/settings.json` | points [Positron](https://positron.posit.co/) or VS Code at the Python environment below |
 
