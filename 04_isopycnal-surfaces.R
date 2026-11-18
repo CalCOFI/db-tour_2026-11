@@ -220,4 +220,93 @@ for (s in surfaces) {
   message("wrote ", png_out)
 }
 
+# 5. one figure to share: where the surface sank, and how far against past falls ----
+# left: the first surface's depth anomaly on the mapped cruise; right: the fall mean depth anomaly
+# of each region's stations, both surfaces, 1993-2026, the mapped cruise's value labelled
+ink      <- "#0b0b0b"; ink_2 <- "#52514e"; surface <- "#fcfcfb"; grid_ink <- "#e8e7e3"
+sig_lbl  <- sprintf("σθ %.1f", surfaces)
+pal      <- setNames(c("#2a78d6", "#eb6834")[seq_along(surfaces)], sig_lbl)  # categorical slots 1-2, validated
+yr_map   <- as.integer(substr(cruise_map, 1, 4))
+theme_share <- theme_minimal(base_size = 10) + theme(
+  plot.background  = element_rect(fill = surface, color = NA),
+  panel.grid.minor = element_blank(),
+  panel.grid.major = element_line(color = grid_ink, linewidth = 0.3),
+  text             = element_text(color = ink),
+  axis.text        = element_text(color = ink_2),
+  strip.text       = element_text(face = "bold", hjust = 0, color = ink),
+  plot.title       = element_text(face = "bold"))
+
+ts <- fall |>
+  filter(short == "depth_m", !is.na(anomaly)) |>
+  summarize(anomaly = mean(anomaly), n = n(), .by = c(region, year, sigma_theta)) |>
+  mutate(surface = factor(sprintf("σθ %.1f", sigma_theta), levels = sig_lbl)) |>
+  droplevels()
+# the mapped cruise's values as a small table right of each panel: one column per surface, in the
+# legend's order, under a header in the first panel (text in ink; the marks carry the colour)
+col_x <- yr_rng[2] + 1.8 + (seq_along(sig_lbl) - 1) * 3.4
+lab <- ts |>
+  filter(year == yr_map) |>
+  mutate(x = col_x[as.integer(surface)], y = max(max(anomaly), 28), .by = region) # clear of the zero line
+hdr <- tibble::tibble(
+  region = factor(levels(ts$region)[1], levels = levels(ts$region)),
+  x = col_x, y = max(lab$y) + 32, label = sprintf("%.1f", surfaces))
+p_ts <- ggplot(ts, aes(year, anomaly, color = surface)) +
+  geom_hline(yintercept = 0, color = ink_2, linewidth = 0.4) +
+  geom_line(linewidth = 0.7) +
+  geom_point(data = filter(ts, year == yr_map), size = 2.6, stroke = 0.8, fill = surface, shape = 21) +
+  geom_text(data = lab, aes(x, y, label = sprintf("%+.0f", anomaly)), color = ink, size = 3.1,
+            hjust = 0, vjust = 0.5, inherit.aes = F) +
+  geom_text(data = hdr, aes(x, y, label = label), color = ink_2, size = 2.8, hjust = 0,
+            fontface = "bold", inherit.aes = F) +
+  facet_wrap(~ region, ncol = 1, strip.position = "top") +
+  scale_color_manual(values = pal, name = NULL) +
+  scale_x_continuous(limits = c(yr_rng[1], max(col_x) + 3), breaks = seq(1995, 2025, by = 10)) +
+  scale_y_continuous(breaks = c(0, 50, 100)) +
+  labs(title = "How far, against past falls", x = NULL,
+       y = "fall depth anomaly, region mean (m, + deeper)") +
+  theme_share + theme(legend.position = "top", legend.justification = "left")
+
+d_m  <- filter(an_cr, abs(sigma_theta - surfaces[1]) < 1e-6)
+pts  <- d_m |>
+  filter(variable == "depth_m", status == "ok") |>
+  summarize(z = mean(anomaly, na.rm = T), .by = c(longitude, latitude)) |>
+  filter(is.finite(z)) |>
+  transmute(lon = longitude, lat = latitude, z)
+g    <- krige_df(pts)
+miss <- d_m |> filter(variable == "depth_m", status == "not_reached") |> distinct(longitude, latitude)
+lim  <- c(-1, 1) * max(abs(g$value))
+p_map <- ggplot() +
+  geom_raster(data = g, aes(x, y, fill = value), interpolate = T) +
+  geom_sf(data = land, fill = "#e3e2de", color = "#b9b8b2", linewidth = 0.2) +
+  geom_point(data = pts, aes(lon, lat), size = 0.6, color = ink) +
+  geom_point(data = miss, aes(longitude, latitude), shape = 4, size = 1.8, color = ink) +
+  scale_fill_gradient2(low = "#184f95", mid = "#f0efec", high = "#b8302f", limits = lim,
+                       name = "m deeper\nthan normal") +
+  coord_sf(xlim = bb[1:2], ylim = bb[3:4], expand = F) +
+  labs(title = sprintf("Where: %s, cruise %s", sig_lbl[1], cruise_map), x = NULL, y = NULL,
+       caption = "× station too shallow to reach the surface") +
+  # the legend in the open water south-east of the stations, clear of the coast where the signal is
+  theme_share + theme(legend.position = "inside", legend.position.inside = c(0.9, 0.2),
+                      legend.direction = "vertical",
+                      legend.background = element_rect(fill = surface, color = NA),
+                      plot.caption = element_text(color = ink_2, hjust = 0))
+
+fig <- (p_map | p_ts) + plot_layout(widths = c(1.35, 1)) + plot_annotation(
+  title    = sprintf("Fall %d: density surfaces off Southern California sank about 100 m near the coast, twice 2015", yr_map),
+  subtitle = paste0(
+    "Depth of the isopycnal on each CTD cast against its station's Sep–Nov 1993–2013 mean. ",
+    "Below the mixed layer, much of a warm anomaly at a fixed depth is this displacement."),
+  caption  = paste0(
+    "Regions (provisional): R. Swalethorp. Right: mean over each region's stations occupied on ", cruise_map,
+    "; SCCOOS stations are too shallow to reach ", sig_lbl[1], ".\n",
+    "Data: CalCOFI.io release v2026.11.14 (doi:10.5281/zenodo.24223907), calcofi4r ",
+    format(packageVersion("calcofi4r")), "; map kriged between casts (cc_interpolate)."),
+  theme = theme_share + theme(
+    plot.title = element_text(face = "bold", size = 14),
+    plot.subtitle = element_text(color = ink_2),
+    plot.caption = element_text(color = ink_2, hjust = 0)))
+png_share <- file.path(dir_out, sprintf("isopycnal_%s_share.png", cruise_map))
+ggsave(png_share, fig, width = 12, height = 8, dpi = 200, bg = surface)
+message("wrote ", png_share)
+
 DBI::dbDisconnect(con, shutdown = T)
